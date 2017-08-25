@@ -36,7 +36,6 @@ class JSGroupBoardViewController: UIViewController, IndicatorInfoProvider, UITab
         
         mainTableView.delegate = self
         mainTableView.dataSource = self
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -93,6 +92,7 @@ class JSGroupBoardViewController: UIViewController, IndicatorInfoProvider, UITab
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
         return IndicatorInfo(title: "게시판")
     }
+    
     
     
     /*********************************************/
