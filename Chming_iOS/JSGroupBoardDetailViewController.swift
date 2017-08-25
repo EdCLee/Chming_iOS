@@ -11,6 +11,10 @@ import Alamofire
 import SwiftyJSON
 import Toaster
 
+protocol DeletePostDelegate {
+    func reloadBoardList()
+}
+
 class JSGroupBoardDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, DeleteCommentDelegate {
     
     var groupPK: Int?
@@ -28,7 +32,7 @@ class JSGroupBoardDetailViewController: UIViewController, UITableViewDelegate, U
     @IBOutlet var commentImageViewMyProfile: UIImageView!
     @IBOutlet var commentTextField: UITextField!
     
-    
+    var delegate: DeletePostDelegate!
     
     /************************/
     // MARK: -  Life Cycle  //
@@ -307,8 +311,38 @@ class JSGroupBoardDetailViewController: UIViewController, UITableViewDelegate, U
     }
     
     func deleteRequest() {
-        // /api/group/(group_pk)/post/(post_pk)/delete/
-
+        
+        guard let vSelectedGroupPK = JSDataCenter.shared.selectedGroupPK else { return }
+        guard let vBoardPK = self.boardPK else { return }
+        guard let vToken = UserDefaults.standard.string(forKey: userDefaultsToken) else { return }
+        
+        let header = HTTPHeaders(dictionaryLiteral: ("Authorization", "Token \(vToken)"))
+        
+        Alamofire.request(rootDomain + "/api/group/\(vSelectedGroupPK)/post/\(vBoardPK)/delete/",
+            method: .delete,
+            parameters: nil,
+            headers: header).responseJSON(completionHandler: {[unowned self] (response) in
+                
+                switch response.result {
+                case .success(let value):
+                    
+                    let json = JSON(value)
+                    print("/////4131 json: ", json)
+                    
+                    if json["detail"].exists() {
+                        DispatchQueue.main.async {
+                            Toast(text: "글을 삭제하였습니다. :D").show()
+                            
+                            self.navigationController?.popViewController(animated: true)
+                            self.delegate.reloadBoardList()
+                        }
+                    }
+                    
+                case .failure(let error):
+                    print("/////4131 Alamofire.request - error: ", error)
+                }
+                
+            })
     }
     
     

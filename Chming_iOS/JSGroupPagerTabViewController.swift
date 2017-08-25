@@ -33,7 +33,7 @@ class JSGroupPagerTabViewController: ButtonBarPagerTabStripViewController, JSGro
         settings.style.buttonBarItemBackgroundColor = myBackgroundColor
         
         
-        self.navigationItem.title = "OO 모임"
+//        self.navigationItem.title = "OO 모임"
         
         // groupPK 값이 오지 않았을 케이스 예외처리
         guard let vGroupPK = groupPK else {
